@@ -1,0 +1,98 @@
+version: '3.8'
+services:
+  db_user:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+
+  user_service:
+    build:
+      context: ./user_service
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - db_user
+    networks:
+      - microservices
+
+  db_product:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - product_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+
+  product_service:
+    build:
+      context: ./product_service
+    ports:
+      - "5001:5001"
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - db_product
+    networks:
+      - microservices
+
+  db_order:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - order_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+
+  order_service:
+    build:
+      context: ./order_service
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - db_order
+    networks:
+      - microservices
+
+  db_invoice:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - invoice_db_data:/var/lib/postgresql/data
+    networks:
+      - microservices
+
+  invoice_service:
+    build:
+      context: ./invoice_service
+    ports:
+      - "5003:5003"
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - db_invoice
+    networks:
+      - microservices
+
+networks:
+  microservices:
+
+volumes:
+  user_db_data:
+  product_db_data:
+  order_db_data:
+  invoice_db_data:
